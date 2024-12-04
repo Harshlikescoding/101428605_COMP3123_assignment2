@@ -1,26 +1,25 @@
-version: "3.9"
 services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: dockerfile
     ports:
       - "5000:5000"
     volumes:
       - ./backend:/app
       - /app/node_modules
-    depends_on:
-      - mongo
     environment:
-      - MONGO_URI=mongodb://mongo:27017/comp3123_assignment2
+      - MONGO_URI=mongodb+srv://harsh960:admin300@cluster0.a3m4h.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      - PORT=5000
+    restart: unless-stopped
 
-  mongo:
-    image: mongo
-    container_name: mongodbcomp3123
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: dockerfile
     ports:
-      - "27017:27017"
+      - "3000:3000"
     volumes:
-      - mongo-data:/data/db
-
-volumes:
-  mongo-data:
+      - ./frontend:/app
+      - /app/node_modules
+    restart: unless-stopped

@@ -3,6 +3,26 @@ const Employee = require('../models/Employee');
 const router = express.Router();
 
 
+router.get('/employees/search', async (req, res) => {
+    const { department, position } = req.query;
+
+    try {
+        // Build dynamic query object
+        const query = {};
+        if (department) query.department = department;
+        if (position) query.position = position;
+
+        // Query the database
+        const employees = await Employee.find(query);
+
+        // Return the result
+        res.status(200).json(employees);
+    } catch (error) {
+        console.error('Error searching employees:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
 router.get('/employees', async (req, res) => {
     try {
         const employees = await Employee.find();
@@ -57,18 +77,17 @@ router.put('/employees/:eid', async (req, res) => {
     }
 });
 
-router.delete('/employees', async (req, res) => {
-    const employeeId = req.query.eid;  
-
+router.delete('/:id', async (req, res) => {
     try {
-        const employee = await Employee.findByIdAndDelete(employeeId);  
-        if (!employee) {
-            return res.status(404).json({ message: 'Employee not found' });
-        }
-        res.status(204).send(); 
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+      const employee = await Employee.findByIdAndDelete(req.params.id);
+      if (!employee) {
+        return res.status(404).send('Employee not found');
+      }
+      res.status(200).send({ message: 'Employee deleted successfully' });
+    } catch (err) {
+      res.status(500).send('Server error');
     }
-});
+  });
+  
 
 module.exports = router;

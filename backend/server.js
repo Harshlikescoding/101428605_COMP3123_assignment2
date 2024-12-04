@@ -1,3 +1,4 @@
+const cors = require('cors');
 const dotenv = require('dotenv');
 dotenv.config();
 const express = require('express');
@@ -5,9 +6,13 @@ const mongoose = require('mongoose');
 
 const app = express();
 
+// Enable CORS for requests from the frontend
+app.use(cors({ origin: 'http://localhost:3000' }));
+
 // Middleware to parse JSON
 app.use(express.json());
 
+// Routes
 const userRoutes = require('./routes/userRoutes');
 const employeeRoutes = require('./routes/employeeRoutes');
 
@@ -19,7 +24,7 @@ app.get('/', (req, res) => {
   res.send('Welcome to COMP3123 Assignment 2 API!');
 });
 
-// Connect to MongoDB (still pending)
+// Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected'))
